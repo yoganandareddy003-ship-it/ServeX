@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicles | SERVEX Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-page">
+<aside class="sidebar">
+    <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+    <div class="user-box">
+        <div class="avatar">🛡️</div>
+        <div>
+            <small>Administrator</small>
+            <strong data-admin-name>Admin</strong>
+        </div>
+    </div>
+    <nav class="nav"><a href="admin-dashboard.html" class="">📊 Dashboard</a>
+<a href="admin-users.html" class="">👥 Users</a>
+<a href="admin-vehicles.html" class="active">🏍️ Vehicles</a>
+<a href="admin-bookings.html" class="">📅 Bookings</a>
+<a href="admin-services.html" class="">🔧 Services</a></nav>
+    <button class="logout" onclick="adminLogout()">↪ Logout</button>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+    <div>
+        <p class="brand-text">SERVEX ADMINISTRATION</p>
+        <h1>Vehicles</h1>
+        <p class="subtitle">View all bikes registered by users.</p>
+    </div>
+</header>
+
+<section class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Owner</th>
+                    <th>Brand</th>
+                    <th>Model</th>
+                    <th>Registration</th>
+                    <th>Year</th>
+                    <th>Fuel</th>
+                    <th>Color</th>
+                </tr>
+            </thead>
+            <tbody id="vehiclesBody"></tbody>
+        </table>
+    </div>
+</section>
+
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    if (!requireAdmin()) return;
+
+    try {
+        const vehicles = await apiFetch("/admin/vehicles");
+
+        document.getElementById("vehiclesBody").innerHTML =
+            vehicles.map(v => `
+                <tr>
+                    <td>${v.id}</td>
+                    <td>
+                        ${adminEscape(v.full_name)}<br>
+                        <small>${adminEscape(v.email)}</small>
+                    </td>
+                    <td>${adminEscape(v.brand)}</td>
+                    <td>${adminEscape(v.model)}</td>
+                    <td><strong>${adminEscape(v.registration_number)}</strong></td>
+                    <td>${v.year || "-"}</td>
+                    <td>${adminEscape(v.fuel_type || "-")}</td>
+                    <td>${adminEscape(v.color || "-")}</td>
+                </tr>
+            `).join("");
+    } catch (error) {
+        alert(error.message);
+    }
+});
+</script>
+
+</body>
+</html>

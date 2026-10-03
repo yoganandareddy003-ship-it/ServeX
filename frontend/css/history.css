@@ -1,0 +1,361 @@
+.history-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(5, 10, 17, .98);
+    backdrop-filter: blur(10px);
+    overscroll-behavior: contain;
+}
+
+.history-modal {
+    position: relative;
+    width: min(1000px, 100%);
+    max-height: min(900px, 92vh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 30px;
+    border: 1px solid #dce3ea;
+    border-radius: 14px;
+    background: #fff;
+    color: #1f2937;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .35);
+}
+
+.history-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 50px 22px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.history-brand {
+    margin-bottom: 8px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.history-header h2 {
+    color: #111827;
+    font-size: 25px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+}
+
+.history-registration {
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.history-close {
+    display: grid;
+    flex: 0 0 40px;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    background: #f8fafc;
+    color: #111827;
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.history-close:hover {
+    border-color: #94a3b8;
+    background: #f1f5f9;
+}
+
+.history-modal > .history-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.history-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 20px 0 28px;
+}
+
+.history-stat {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 11px;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #fbfcfe;
+}
+
+.history-stat-icon {
+    display: grid;
+    flex: 0 0 38px;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--brand-accent-soft);
+    color: var(--brand-accent);
+    font-weight: 800;
+}
+
+.history-stat span,
+.history-stat strong {
+    display: block;
+}
+
+.history-stat span {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.history-stat strong {
+    margin-top: 4px;
+    color: #111827;
+    font-size: 15px;
+}
+
+.history-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.history-title h3 {
+    color: #111827;
+    font-size: 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+}
+
+.history-title p {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.history-count {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.history-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.history-action {
+    min-height: 34px;
+    padding: 7px 11px;
+    border: 1px solid #cbd5df;
+    border-radius: 6px;
+    background: #fff;
+    color: #243444;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.history-action:hover {
+    border-color: #94a3b8;
+    background: #f8fafc;
+    color: #334155;
+}
+
+.history-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.history-table {
+    min-width: 650px;
+}
+
+.history-table th,
+.history-table td {
+    padding: 13px 14px;
+}
+
+.history-table td:first-child {
+    color: #64748b;
+}
+
+.history-table th {
+    background: #f5f8fb;
+    color: #536171;
+}
+
+.service-name {
+    color: #111827;
+    font-weight: 700;
+}
+
+.description {
+    color: #64748b;
+}
+
+.amount {
+    color: #111827;
+    white-space: nowrap;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-badge.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.no-history,
+.history-loading {
+    padding: 48px 20px;
+    text-align: center;
+}
+
+.no-history > div {
+    margin-bottom: 10px;
+    font-size: 32px;
+}
+
+.no-history p,
+.history-loading p {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.history-spinner {
+    width: 38px;
+    height: 38px;
+    margin: 0 auto 16px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #64748b;
+    border-radius: 50%;
+    animation: history-spin .8s linear infinite;
+}
+
+@keyframes history-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 700px) {
+    .history-overlay {
+        padding: 10px;
+    }
+
+    .history-modal {
+        max-height: 96vh;
+        padding: 22px 16px;
+    }
+
+    .history-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .history-stat {
+        padding: 10px;
+    }
+
+    .history-header h2 {
+        font-size: 21px;
+    }
+
+    .history-title {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .history-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media print {
+    @page {
+        margin: 14mm;
+    }
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    #vehicleHistoryModal,
+    #vehicleHistoryModal * {
+        visibility: visible !important;
+    }
+
+    #vehicleHistoryModal {
+        position: absolute;
+        inset: 0;
+        display: block;
+        overflow: visible;
+        padding: 0;
+        background: #fff;
+        backdrop-filter: none;
+    }
+
+    #vehicleHistoryModal .history-modal {
+        width: 100%;
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    #vehicleHistoryModal .history-close,
+    #vehicleHistoryModal .history-actions {
+        display: none !important;
+    }
+
+    #vehicleHistoryModal .history-table-wrapper {
+        overflow: visible;
+    }
+
+    #vehicleHistoryModal .history-table {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #vehicleHistoryModal tr {
+        break-inside: avoid;
+    }
+}

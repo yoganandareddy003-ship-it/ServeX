@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SERVEX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+<div class="auth-page">
+    <div class="login-backdrop" aria-hidden="true">
+        <div class="login-scene login-scene-dirt"></div>
+        <div class="login-scene login-scene-sport"></div>
+        <div class="login-slash login-slash-cyan"></div>
+        <div class="login-slash login-slash-red"></div>
+    </div>
+
+    <div class="auth-card">
+
+        <div class="auth-logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+
+        <h1 class="login-title">Welcome <span>Back</span></h1>
+        <p class="subtitle">Login to manage your bikes and services.</p>
+
+        <div id="loginAlert" class="alert hidden"></div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input id="email" type="email" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input id="password" type="password" placeholder="Enter password" required>
+            </div>
+
+            <div class="login-options">
+                <label class="remember-me" for="rememberMe">
+                    <input id="rememberMe" type="checkbox">
+                    <span class="remember-switch" aria-hidden="true"></span>
+                    <span>Remember me</span>
+                </label>
+                <a href="forgot-password.html" class="auth-forgot">Forgot password?</a>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%">
+                Login
+            </button>
+
+            <a href="admin-login.html" class="btn btn-secondary" style="width:100%; display:inline-block; text-align:center; margin-top:12px;">
+                Login as Admin
+            </a>
+
+        </form>
+
+        <div class="auth-footer">
+            Don't have an account?
+            <a href="register.html">Create account</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

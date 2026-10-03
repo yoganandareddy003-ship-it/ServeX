@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Service | SERVEX</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/book-service.css">
+</head>
+<body class="customer-page customer-booking">
+
+    <aside class="sidebar">
+        <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+
+        <div class="user-box">
+            <div class="avatar">👤</div>
+            <div>
+                <small>Welcome</small>
+                <strong data-user-name>User</strong>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html" class="">🏠 Dashboard</a>
+            <a href="my-vehicles.html" class="">🏍️ My Vehicles</a>
+            <a href="book-service.html" class="active">🛠️ Book Service</a>
+            <a href="service-history.html" class="">📋 Service History</a>
+        </nav>
+
+        <button class="logout" onclick="logout()">↪ Logout</button>
+    </aside>
+
+    <main class="main">
+
+<header class="topbar portal-page-header">
+    <div class="portal-heading">
+        <nav class="portal-breadcrumbs" aria-label="Breadcrumb">
+            <a href="dashboard.html">Home</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Book Service</span>
+        </nav>
+        <h1>Book Service</h1>
+        <p class="subtitle">Expert care, on your schedule.</p>
+    </div>
+    <a class="portal-action" href="#bookingForm">Start booking <span aria-hidden="true">↓</span></a>
+</header>
+
+<section class="card">
+
+    <div class="card-title">
+        <div>
+            <h2>Schedule Your Service</h2>
+            <p>Choose a bike, service package, and appointment slot.</p>
+        </div>
+    </div>
+
+    <div id="bookingMessage" class="alert hidden"></div>
+
+    <form id="bookingForm">
+        <ol class="booking-progress" aria-label="Booking progress">
+            <li class="active" data-step-indicator="1" aria-current="step">
+                <span>1</span><span>Select Bike</span>
+            </li>
+            <li data-step-indicator="2">
+                <span>2</span><span>Choose Service Package</span>
+            </li>
+            <li data-step-indicator="3">
+                <span>3</span><span>Pick Slot</span>
+            </li>
+        </ol>
+
+        <section class="booking-step-panel" data-step-panel="1" aria-labelledby="stepBikeTitle">
+            <div class="booking-step-heading">
+                <span>Step 1 of 3</span>
+                <h3 id="stepBikeTitle">Which bike are we servicing?</h3>
+            </div>
+            <div id="vehicleOptions" class="booking-choice-grid" role="group" aria-label="Choose a vehicle"></div>
+            <div class="booking-step-actions">
+                <span class="booking-step-hint">Select one vehicle to continue.</span>
+                <button class="btn btn-primary" type="button" data-next-step="2" disabled>
+                    Choose service <span aria-hidden="true">→</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="booking-step-panel" data-step-panel="2" aria-labelledby="stepPackageTitle" hidden>
+            <div class="booking-step-heading">
+                <span>Step 2 of 3</span>
+                <h3 id="stepPackageTitle">Choose a service package</h3>
+                <p>Service prices are estimates and are confirmed by the workshop.</p>
+            </div>
+            <div id="serviceOptions" class="service-package-grid" role="group" aria-label="Choose a service package"></div>
+            <div class="booking-step-actions">
+                <button class="btn btn-secondary" type="button" data-previous-step="1">
+                    <span aria-hidden="true">←</span> Back
+                </button>
+                <button class="btn btn-primary" type="button" data-next-step="3" disabled>
+                    Pick a slot <span aria-hidden="true">→</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="booking-step-panel" data-step-panel="3" aria-labelledby="stepSlotTitle" hidden>
+            <div class="booking-step-heading">
+                <span>Step 3 of 3</span>
+                <h3 id="stepSlotTitle">Pick a date and time</h3>
+                <p>Appointments are available between 9:00 AM and 5:00 PM.</p>
+            </div>
+
+            <div class="booking-slot-layout">
+                <div class="booking-slot-fields">
+                    <div class="form-group">
+                        <label for="date">Service date</label>
+                        <input id="date" type="date" required>
+                    </div>
+
+                    <fieldset class="booking-time-fieldset">
+                        <legend>Available time</legend>
+                        <div id="timeOptions" class="booking-time-grid" role="group" aria-label="Choose an appointment time">
+                            <button type="button" class="booking-time-option" data-time="09:00:00" aria-pressed="false">09:00 AM</button>
+                            <button type="button" class="booking-time-option" data-time="10:00:00" aria-pressed="false">10:00 AM</button>
+                            <button type="button" class="booking-time-option" data-time="11:00:00" aria-pressed="false">11:00 AM</button>
+                            <button type="button" class="booking-time-option" data-time="12:00:00" aria-pressed="false">12:00 PM</button>
+                            <button type="button" class="booking-time-option" data-time="14:00:00" aria-pressed="false">02:00 PM</button>
+                            <button type="button" class="booking-time-option" data-time="15:00:00" aria-pressed="false">03:00 PM</button>
+                            <button type="button" class="booking-time-option" data-time="16:00:00" aria-pressed="false">04:00 PM</button>
+                            <button type="button" class="booking-time-option" data-time="17:00:00" aria-pressed="false">05:00 PM</button>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-group booking-notes">
+                        <label for="notes">Notes <span>(optional)</span></label>
+                        <textarea id="notes" placeholder="Anything the workshop should know?"></textarea>
+                    </div>
+                </div>
+
+                <aside class="booking-review" aria-label="Booking summary">
+                    <h4>Booking summary</h4>
+                    <dl>
+                        <div><dt>Bike</dt><dd id="summaryBike">Not selected</dd></div>
+                        <div><dt>Registration</dt><dd id="summaryRegistration">—</dd></div>
+                        <div><dt>Package</dt><dd id="summaryService">Not selected</dd></div>
+                        <div><dt>Estimate</dt><dd id="summaryPrice">—</dd></div>
+                        <div><dt>Date &amp; time</dt><dd id="summaryDate">Not selected</dd></div>
+                    </dl>
+                </aside>
+            </div>
+
+            <div class="booking-step-actions">
+                <button class="btn btn-secondary" type="button" data-previous-step="2">
+                    <span aria-hidden="true">←</span> Back
+                </button>
+                <button id="confirmBooking" class="btn btn-primary booking-confirm" type="submit" disabled>
+                    Confirm booking <span aria-hidden="true">✓</span>
+                </button>
+            </div>
+        </section>
+
+    </form>
+</section>
+
+    </main>
+
+<script src="js/api.js"></script>
+<script src="js/booking.js"></script>
+</body>
+</html>

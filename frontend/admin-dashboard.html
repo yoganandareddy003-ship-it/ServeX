@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SERVEX Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-page">
+<aside class="sidebar">
+    <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+    <div class="user-box">
+        <div class="avatar">🛡️</div>
+        <div>
+            <small>Administrator</small>
+            <strong data-admin-name>Admin</strong>
+        </div>
+    </div>
+    <nav class="nav"><a href="admin-dashboard.html" class="active">📊 Dashboard</a>
+<a href="admin-users.html" class="">👥 Users</a>
+<a href="admin-vehicles.html" class="">🏍️ Vehicles</a>
+<a href="admin-bookings.html" class="">📅 Bookings</a>
+<a href="admin-services.html" class="">🔧 Services</a></nav>
+    <button class="logout" onclick="adminLogout()">↪ Logout</button>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+    <div>
+        <p class="brand-text">SERVEX ADMINISTRATION</p>
+        <h1>Admin Dashboard</h1>
+        <p class="subtitle">Monitor the SERVEX bike service platform.</p>
+    </div>
+    <div class="header-icon">🛡️</div>
+</header>
+
+<div id="adminMessage" class="alert hidden"></div>
+
+<section class="stats">
+    <div class="stat"><div class="stat-icon">👥</div><div><small>Total Users</small><strong id="adminUsers">0</strong></div></div>
+    <div class="stat"><div class="stat-icon">🏍️</div><div><small>Total Vehicles</small><strong id="adminVehicles">0</strong></div></div>
+    <div class="stat"><div class="stat-icon">📅</div><div><small>Total Bookings</small><strong id="adminBookings">0</strong></div></div>
+    <div class="stat"><div class="stat-icon">⏳</div><div><small>Pending</small><strong id="adminPending">0</strong></div></div>
+    <div class="stat"><div class="stat-icon">✓</div><div><small>Completed</small><strong id="adminCompleted">0</strong></div></div>
+    <div class="stat"><div class="stat-icon">₹</div><div><small>Service Revenue</small><strong id="adminRevenue">₹0.00</strong></div></div>
+</section>
+
+<section class="card">
+    <div class="card-title">
+        <div>
+            <h2>Administration</h2>
+            <p>Use the modules below to manage the application.</p>
+        </div>
+    </div>
+
+    <div class="quick-links">
+        <a class="quick-link" href="admin-users.html">👥<strong>Manage Users</strong><small>Accounts and roles</small></a>
+        <a class="quick-link" href="admin-vehicles.html">🏍️<strong>Manage Vehicles</strong><small>All registered bikes</small></a>
+        <a class="quick-link" href="admin-bookings.html">📅<strong>Manage Bookings</strong><small>Confirm and complete services</small></a>
+        <a class="quick-link" href="admin-services.html">🔧<strong>Manage Services</strong><small>Prices and service types</small></a>
+    </div>
+</section>
+
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/admin-dashboard.js"></script>
+</body>
+</html>

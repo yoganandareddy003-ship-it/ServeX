@@ -1,0 +1,23 @@
+# Local environment and secrets
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
+# Installed dependencies
+node_modules/
+**/node_modules/
+
+# Generated output and logs
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Operating-system files
+.DS_Store
+Thumbs.db

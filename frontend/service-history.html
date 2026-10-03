@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service History | SERVEX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="customer-page customer-history">
+
+    <aside class="sidebar">
+        <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+
+        <div class="user-box">
+            <div class="avatar">👤</div>
+            <div>
+                <small>Welcome</small>
+                <strong data-user-name>User</strong>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html" class="">🏠 Dashboard</a>
+            <a href="my-vehicles.html" class="">🏍️ My Vehicles</a>
+            <a href="book-service.html" class="">🛠️ Book Service</a>
+            <a href="service-history.html" class="active">📋 Service History</a>
+        </nav>
+
+        <button class="logout" onclick="logout()">↪ Logout</button>
+    </aside>
+
+    <main class="main">
+
+<header class="topbar portal-page-header">
+    <div class="portal-heading">
+        <nav class="portal-breadcrumbs" aria-label="Breadcrumb">
+            <a href="dashboard.html">Home</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Service History</span>
+        </nav>
+        <h1>Service History</h1>
+        <p class="subtitle">Every service, logged and ready when you need it.</p>
+    </div>
+    <a class="portal-action" href="book-service.html">Book a service <span aria-hidden="true">↗</span></a>
+</header>
+
+<section class="card">
+
+    <div class="card-title">
+        <div>
+            <h2>Service Records</h2>
+            <p>Your completed service history.</p>
+        </div>
+    </div>
+
+    <div id="historyControls" class="table-controls" hidden>
+        <label class="table-search-control" for="historySearch">
+            <span>Search records</span>
+            <input
+                id="historySearch"
+                type="search"
+                placeholder="Vehicle, registration, service..."
+                autocomplete="off"
+                aria-controls="historyBody"
+            >
+        </label>
+        <label class="table-date-control" for="historyDateRange">
+            <span>Date range</span>
+            <select id="historyDateRange" aria-controls="historyBody">
+                <option value="all">All time</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="year">This year</option>
+            </select>
+        </label>
+    </div>
+    <div id="historySearchEmpty" class="search-empty-state history-search-empty" role="status" hidden>
+        <span class="search-empty-illustration" aria-hidden="true">
+            <svg viewBox="0 0 48 48" focusable="false">
+                <path d="M13 7h15l8 8v12M28 7v9h8M18 22h9M18 27h5"></path>
+                <circle cx="20" cy="34" r="6"></circle>
+                <path d="m24.5 38.5 5 5"></path>
+            </svg>
+        </span>
+        <span class="search-empty-copy">
+            <strong>No service records found</strong>
+            <span>Try another term or widen the date range.</span>
+        </span>
+        <button id="clearHistoryFilters" class="search-empty-reset" type="button">Clear filters</button>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Vehicle</th>
+                    <th>Registration</th>
+                    <th>Service</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Invoice</th>
+                </tr>
+            </thead>
+
+            <tbody id="historyBody"></tbody>
+        </table>
+    </div>
+
+</section>
+
+    </main>
+
+<script src="js/api.js"></script>
+<script src="js/history.js"></script>
+</body>
+</html>

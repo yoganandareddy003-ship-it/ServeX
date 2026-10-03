@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | SERVEX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="customer-dashboard">
+
+    <aside class="sidebar">
+        <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+
+        <div class="user-box">
+            <div class="avatar">👤</div>
+            <div>
+                <small>Welcome</small>
+                <strong data-user-name>User</strong>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html" class="active">🏠 Dashboard</a>
+            <a href="my-vehicles.html" class="">🏍️ My Vehicles</a>
+            <a href="book-service.html" class="">🛠️ Book Service</a>
+            <a href="service-history.html" class="">📋 Service History</a>
+        </nav>
+
+        <button class="logout" onclick="logout()">↪ Logout</button>
+    </aside>
+
+    <main class="main">
+
+<header class="topbar portal-page-header">
+    <div class="portal-heading">
+        <nav class="portal-breadcrumbs" aria-label="Breadcrumb">
+            <span aria-current="page">Home</span>
+        </nav>
+        <h1>Welcome back, <span data-user-name>Rider</span></h1>
+        <p class="subtitle">Your bikes, service schedule and ride history in one place.</p>
+    </div>
+    <a class="portal-action" href="book-service.html">Book a service <span aria-hidden="true">↗</span></a>
+</header>
+
+<section id="serviceReminderBox" class="reminder-banner hidden" aria-live="polite"></section>
+
+<section class="stats">
+    <div class="stat">
+        <div class="stat-icon">🏍️</div>
+        <div>
+            <small>My Vehicles</small>
+            <strong id="totalVehicles">0</strong>
+            <span id="vehiclesTrend" class="metric-trend neutral" title="Vehicle additions in the last 90 days compared with the previous 90 days">Loading trend</span>
+        </div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-icon">📅</div>
+        <div>
+            <small>Active Bookings</small>
+            <strong id="activeBookings">0</strong>
+            <span id="bookingsTrend" class="metric-trend neutral" title="Active bookings created in the last 90 days compared with the previous 90 days">Loading trend</span>
+        </div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-icon">🔧</div>
+        <div>
+            <small>Completed Services</small>
+            <strong id="completedServices">0</strong>
+            <span id="servicesTrend" class="metric-trend neutral" title="Completed services in the last 90 days compared with the previous 90 days">Loading trend</span>
+        </div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-icon">₹</div>
+        <div>
+            <small>Total Spent</small>
+            <strong id="totalSpent">₹0.00</strong>
+            <span id="spentTrend" class="metric-trend neutral" title="Service spend in the last 90 days compared with the previous 90 days">Loading trend</span>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-title">
+        <div>
+            <h2>Recent Bookings</h2>
+            <p>Your latest service appointments.</p>
+        </div>
+        <a class="dashboard-text-link" href="service-history.html">Service history <span aria-hidden="true">↗</span></a>
+    </div>
+
+    <div class="table-controls dashboard-table-controls">
+        <label class="table-search-control" for="dashboardSearch">
+            <span>Search bookings</span>
+            <input
+                id="dashboardSearch"
+                type="search"
+                placeholder="Vehicle, registration, service, status..."
+                autocomplete="off"
+                aria-controls="recentBookings"
+            >
+        </label>
+        <label class="table-date-control" for="dashboardDateRange">
+            <span>Date range</span>
+            <select id="dashboardDateRange" aria-controls="recentBookings">
+                <option value="all">All time</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="year">This year</option>
+            </select>
+        </label>
+    </div>
+    <p id="dashboardSearchEmpty" class="table-empty-state" role="status" hidden>
+        No bookings match these filters.
+    </p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Registration</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Invoice</th>
+                </tr>
+            </thead>
+            <tbody id="recentBookings"></tbody>
+        </table>
+    </div>
+</section>
+
+<div class="quick-links">
+    <a class="quick-link" href="my-vehicles.html">
+        <span>🏍️</span>
+        <strong>My Vehicles</strong>
+        <small>Add or edit your bikes</small>
+    </a>
+
+    <a class="quick-link" href="book-service.html">
+        <span>🛠️</span>
+        <strong>Book Service</strong>
+        <small>Schedule a service appointment</small>
+    </a>
+
+    <a class="quick-link" href="service-history.html">
+        <span>📋</span>
+        <strong>Service History</strong>
+        <small>View previous service records</small>
+    </a>
+</div>
+
+    </main>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
