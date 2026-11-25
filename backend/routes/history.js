@@ -25,7 +25,9 @@ router.get("/", async (req, res) => {
              FROM service_history h
              INNER JOIN vehicles v ON v.id = h.vehicle_id
              INNER JOIN services s ON s.id = h.service_id
-             WHERE h.user_id = ?
+                         WHERE h.user_id = ?
+                             AND h.status = 'Completed'
+                             AND h.service_date <= CURRENT_DATE()
              ORDER BY h.service_date DESC, h.id DESC`,
             [req.user.id]
         );

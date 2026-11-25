@@ -26,13 +26,15 @@
 
 <main class="main">
 
-<header class="topbar">
-    <div>
-        <p class="brand-text">SERVEX ADMINISTRATION</p>
-        <h1>Admin Dashboard</h1>
-        <p class="subtitle">Monitor the SERVEX bike service platform.</p>
+<header class="topbar portal-page-header">
+    <div class="portal-heading">
+        <nav class="portal-breadcrumbs" aria-label="Breadcrumb">
+            <span aria-current="page">Admin</span>
+        </nav>
+        <h1>Welcome back, <span data-admin-name>Admin</span></h1>
+        <p class="subtitle">Monitor the SERVEX bike service platform and keep every service moving.</p>
     </div>
-    <div class="header-icon">🛡️</div>
+    <a class="portal-action" href="admin-bookings.html">Review bookings <span aria-hidden="true">↗</span></a>
 </header>
 
 <div id="adminMessage" class="alert hidden"></div>
@@ -58,6 +60,7 @@
         <a class="quick-link" href="admin-users.html">👥<strong>Manage Users</strong><small>Accounts and roles</small></a>
         <a class="quick-link" href="admin-vehicles.html">🏍️<strong>Manage Vehicles</strong><small>All registered bikes</small></a>
         <a class="quick-link" href="admin-bookings.html">📅<strong>Manage Bookings</strong><small>Confirm and complete services</small></a>
+        <a class="quick-link" href="admin-service-history.html">📋<strong>Service History</strong><small>All repaired bikes and users</small></a>
         <a class="quick-link" href="admin-services.html">🔧<strong>Manage Services</strong><small>Prices and service types</small></a>
     </div>
 </section>

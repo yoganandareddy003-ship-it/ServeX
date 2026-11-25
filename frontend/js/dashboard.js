@@ -6,12 +6,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("dashboardDateRange")
         .addEventListener("change", filterDashboardBookings);
 
-    const user = getUser();
-
-    document.querySelectorAll("[data-user-name]").forEach(el => {
-        el.textContent = user?.full_name || "User";
-    });
-
     try {
         const data = await apiFetch("/dashboard/stats");
 

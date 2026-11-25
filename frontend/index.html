@@ -51,9 +51,24 @@
 
         <section id="care" class="home-care" aria-labelledby="careTitle">
             <div class="home-care-heading">
+                <p class="home-section-kicker">SERVEX SERVICE MENU</p>
+                <h2 id="careTitle">Care for every kind of ride.</h2>
+                <p>Explore the services currently available. Sign in to book the right care for your bike.</p>
+                <a class="home-care-login" href="login.html">Sign in to book <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="home-care-catalog">
+                <p class="home-catalog-label">AVAILABLE SERVICES</p>
+                <div id="homeServiceList" class="home-feature-list" aria-live="polite">
+                    <p class="home-service-status" role="status">Loading services...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-platform" aria-labelledby="platformTitle">
+            <div class="home-platform-heading">
                 <p class="home-section-kicker">ONE PLACE. EVERY PART OF THE RIDE.</p>
-                <h2 id="careTitle">Good rides start with good care.</h2>
-                <p>From the first bike in your garage to the next service on your calendar, your essentials stay together.</p>
+                <h2 id="platformTitle">Your garage, bookings, and history in sync.</h2>
+                <p>Keep the details around every ride close at hand.</p>
             </div>
             <div class="home-feature-list">
                 <article class="home-feature">
@@ -90,5 +105,6 @@
         </footer>
     </main>
     <script src="js/api.js"></script>
+    <script src="js/home.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@
 
 .booking-progress {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 18px;
 	margin: 8px 0 32px;
 	padding: 0;
@@ -66,7 +66,17 @@
 .booking-progress li.complete > span:first-child {
 	border-color: var(--brand-accent);
 	background: var(--brand-accent);
-	color: #052e1b;
+	color: #fff;
+}
+.booking-progress li.active > span:first-child {
+	box-shadow: 0 0 0 4px rgba(4, 120, 87, .15);
+}
+.booking-progress li.complete > span:first-child {
+	font-size: 0;
+}
+.booking-progress li.complete > span:first-child::before {
+	content: "✓";
+	font-size: 14px;
 }
 
 .booking-step-heading {
@@ -445,5 +455,141 @@
 
 	.booking-confirm {
 		min-width: 0;
+	}
+}
+
+.parts-request-fields {
+	display: grid;
+	grid-template-columns: minmax(180px, .7fr) minmax(0, 1.8fr);
+	gap: 16px;
+	margin-bottom: 18px;
+}
+
+.parts-request-fields .form-group {
+	margin-bottom: 0;
+}
+
+.parts-request-fields label {
+	display: block;
+	margin-bottom: 7px;
+	color: #334155;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.parts-request-fields label span {
+	color: #64748b;
+	font-weight: 400;
+}
+
+.parts-request-fields select,
+.parts-request-fields textarea {
+	width: 100%;
+	min-height: 42px;
+	padding: 10px 12px;
+	border: 1px solid #cbd5e1;
+	border-radius: 7px;
+	background: #fff;
+	color: #1e293b;
+	font: inherit;
+}
+
+.parts-choice-list {
+	display: grid;
+	gap: 14px;
+}
+
+.parts-category {
+	min-width: 0;
+	margin: 0;
+	padding: 14px;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+}
+
+.parts-category legend {
+	padding: 0 6px;
+	color: #334155;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.parts-category-options {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.part-option {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 9px;
+	padding: 10px;
+	border: 1px solid #e2e8f0;
+	border-radius: 7px;
+	background: #fff;
+	color: #334155;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.part-option:has(input:checked) {
+	border-color: var(--brand-accent);
+	background: #f0fdf4;
+}
+
+.part-option input {
+	width: 16px;
+	height: 16px;
+	flex: 0 0 16px;
+	margin: 0;
+	accent-color: var(--brand-accent);
+}
+
+.part-option span {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.part-option-copy {
+	display: grid;
+	gap: 3px;
+}
+
+.part-option-copy strong {
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.part-option-copy small {
+	color: #64748b;
+	font-size: 11px;
+}
+
+.parts-selection-summary {
+	margin: 12px 0 0;
+	color: #334155;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.parts-message {
+	min-height: 18px;
+	margin: 4px 0 0;
+	color: #64748b;
+	font-size: 12px;
+}
+
+@media (max-width: 800px) {
+	.parts-category-options {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 600px) {
+	.parts-request-fields,
+	.parts-category-options {
+		grid-template-columns: 1fr;
 	}
 }

@@ -50,7 +50,7 @@
     <div class="card-title">
         <div>
             <h2>Schedule Your Service</h2>
-            <p>Choose a bike, service package, and appointment slot.</p>
+            <p>Choose a bike, service package, parts, and appointment slot.</p>
         </div>
     </div>
 
@@ -65,13 +65,16 @@
                 <span>2</span><span>Choose Service Package</span>
             </li>
             <li data-step-indicator="3">
-                <span>3</span><span>Pick Slot</span>
+                <span>3</span><span>Bike Parts</span>
+            </li>
+            <li data-step-indicator="4">
+                <span>4</span><span>Pick Slot</span>
             </li>
         </ol>
 
         <section class="booking-step-panel" data-step-panel="1" aria-labelledby="stepBikeTitle">
             <div class="booking-step-heading">
-                <span>Step 1 of 3</span>
+                <span>Step 1 of 4</span>
                 <h3 id="stepBikeTitle">Which bike are we servicing?</h3>
             </div>
             <div id="vehicleOptions" class="booking-choice-grid" role="group" aria-label="Choose a vehicle"></div>
@@ -85,7 +88,7 @@
 
         <section class="booking-step-panel" data-step-panel="2" aria-labelledby="stepPackageTitle" hidden>
             <div class="booking-step-heading">
-                <span>Step 2 of 3</span>
+                <span>Step 2 of 4</span>
                 <h3 id="stepPackageTitle">Choose a service package</h3>
                 <p>Service prices are estimates and are confirmed by the workshop.</p>
             </div>
@@ -95,14 +98,51 @@
                     <span aria-hidden="true">←</span> Back
                 </button>
                 <button class="btn btn-primary" type="button" data-next-step="3" disabled>
-                    Pick a slot <span aria-hidden="true">→</span>
+                    Choose parts <span aria-hidden="true">→</span>
                 </button>
             </div>
         </section>
 
-        <section class="booking-step-panel" data-step-panel="3" aria-labelledby="stepSlotTitle" hidden>
+        <section class="booking-step-panel" data-step-panel="3" aria-labelledby="stepPartsTitle" hidden>
             <div class="booking-step-heading">
-                <span>Step 3 of 3</span>
+                <span>Step 3 of 4</span>
+                <h3 id="stepPartsTitle">What needs attention?</h3>
+                <p>Select the parts you want the workshop to repair, replace, or inspect.</p>
+            </div>
+
+            <div class="parts-request-fields">
+                <div class="form-group">
+                    <label for="partAction">Requested action</label>
+                    <select id="partAction" required>
+                        <option value="Repair">Repair</option>
+                        <option value="Replace">Replace</option>
+                        <option value="Inspect">Inspect</option>
+                    </select>
+                </div>
+                <div class="form-group parts-description-field">
+                    <label for="partDescription">Describe the problem <span>(optional)</span></label>
+                    <textarea id="partDescription" maxlength="500" rows="2"
+                        placeholder="Example: unusual noise or weak brakes"></textarea>
+                </div>
+            </div>
+
+            <div id="partOptions" class="parts-choice-list" role="group" aria-label="Choose bike parts"></div>
+            <p id="partsSelectionSummary" class="parts-selection-summary" aria-live="polite">0 parts selected.</p>
+            <p id="partsMessage" class="parts-message" aria-live="polite"></p>
+
+            <div class="booking-step-actions">
+                <button class="btn btn-secondary" type="button" data-previous-step="2">
+                    <span aria-hidden="true">←</span> Back
+                </button>
+                <button class="btn btn-primary" type="button" data-next-step="4" disabled>
+                    Choose appointment <span aria-hidden="true">→</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="booking-step-panel" data-step-panel="4" aria-labelledby="stepSlotTitle" hidden>
+            <div class="booking-step-heading">
+                <span>Step 4 of 4</span>
                 <h3 id="stepSlotTitle">Pick a date and time</h3>
                 <p>Appointments are available between 9:00 AM and 5:00 PM.</p>
             </div>
@@ -140,14 +180,18 @@
                         <div><dt>Bike</dt><dd id="summaryBike">Not selected</dd></div>
                         <div><dt>Registration</dt><dd id="summaryRegistration">—</dd></div>
                         <div><dt>Package</dt><dd id="summaryService">Not selected</dd></div>
-                        <div><dt>Estimate</dt><dd id="summaryPrice">—</dd></div>
+                        <div><dt>Parts</dt><dd id="summaryParts">None selected</dd></div>
+                        <div><dt>Requested</dt><dd id="summaryPartAction">Repair</dd></div>
+                        <div><dt>Package price</dt><dd id="summaryServicePrice">—</dd></div>
+                        <div><dt>Parts estimate</dt><dd id="summaryPartsPrice">—</dd></div>
+                        <div><dt>Total estimate</dt><dd id="summaryPrice">—</dd></div>
                         <div><dt>Date &amp; time</dt><dd id="summaryDate">Not selected</dd></div>
                     </dl>
                 </aside>
             </div>
 
             <div class="booking-step-actions">
-                <button class="btn btn-secondary" type="button" data-previous-step="2">
+                <button class="btn btn-secondary" type="button" data-previous-step="3">
                     <span aria-hidden="true">←</span> Back
                 </button>
                 <button id="confirmBooking" class="btn btn-primary booking-confirm" type="submit" disabled>

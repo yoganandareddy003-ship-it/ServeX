@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 150 768 450" role="img" aria-labelledby="title description">
+  <title id="title">ServeX Service Beyond Drive</title>
+  <desc id="description">Silver Serve lettering and a neon green X framed by matching speed arcs.</desc>
+  <defs>
+    <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff"/>
+      <stop offset=".58" stop-color="#e3e6e8"/>
+      <stop offset="1" stop-color="#9da3a8"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#b5ff00"/>
+      <stop offset=".48" stop-color="#46f000"/>
+      <stop offset="1" stop-color="#00c927"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="150" width="768" height="450" fill="#020303"/>
+
+  <path d="M184 290c87-73 214-121 321-112 72 6 123 34 163 86h-42c-36-40-73-58-124-64-98-12-209 25-291 91z" fill="url(#green)"/>
+  <path d="M210 297c87-68 190-100 280-91 36 4 67 16 96 37-34-18-64-25-99-25-90 0-182 34-263 88z" fill="#07130a"/>
+
+  <text x="34" y="430" font-family="Arial, Helvetica, sans-serif" font-size="166" font-weight="900" font-style="italic" letter-spacing="-12" fill="url(#silver)" stroke="#15191b" stroke-width="9" paint-order="stroke">Serve</text>
+  <path d="M520 280h72l37 50 52-50h61l-82 78 62 97h-68l-42-55-57 55h-62l84-73z" fill="url(#green)" stroke="#06210a" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M42 470h80M616 470h68" stroke="url(#green)" stroke-width="3" stroke-linecap="round"/>
+  <text x="384" y="482" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700" letter-spacing="7" fill="#f2f3f4">SERVICE BEYOND DRIVE</text>
+
+  <path d="M92 489c72 74 177 95 275 85 72-7 130-31 184-78h-78c-48 30-99 46-153 46-88 0-161-22-228-72z" fill="url(#green)"/>
+  <path d="M121 503c64 48 127 68 199 68 53 0 103-12 150-35-53 35-108 52-171 52-71 0-133-21-178-85z" fill="#07130a"/>
+</svg>

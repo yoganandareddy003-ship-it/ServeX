@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "ServeX: frontend and backend",
+			"type": "shell",
+			"command": "$env:JWT_SECRET = [guid]::NewGuid().ToString() + [guid]::NewGuid().ToString(); npm --prefix backend run dev",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

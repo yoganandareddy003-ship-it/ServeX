@@ -1,10 +1,38 @@
 const express = require("express");
 const db = require("../db");
 const auth = require("../middleware/auth");
+const { ensureBikePartsSchema } = require("../utils/parts");
 
 const router = express.Router();
+let partsSchemaReady;
 
 router.use(auth);
+
+router.get("/parts", async (req, res) => {
+    try {
+        if (!partsSchemaReady) {
+            partsSchemaReady = ensureBikePartsSchema(db).catch(error => {
+                partsSchemaReady = null;
+                throw error;
+            });
+        }
+        await partsSchemaReady;
+
+        const [rows] = await db.query(
+            `SELECT id, part_name, category, vehicle_type, price
+             FROM parts
+             WHERE active = TRUE
+             ORDER BY category, part_name`
+        );
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        const message = error.code === "ER_NO_SUCH_TABLE"
+            ? "Bike parts tables are missing. Run database/admin_patch.sql against the database configured by the backend."
+            : `Unable to load bike parts (${error.code || "database error"})`;
+        res.status(500).json({ message });
+    }
+});
 
 router.get("/", async (req, res) => {
     try {
@@ -31,6 +59,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
     const connection = await db.getConnection();
+    let transactionStarted = false;
 
     try {
         const {
@@ -38,7 +67,10 @@ router.post("/", async (req, res) => {
             service_id,
             service_date,
             service_time,
-            notes
+            notes,
+            part_ids,
+            part_action,
+            part_description
         } = req.body;
 
         const allowedTimes = [
@@ -64,8 +96,35 @@ router.post("/", async (req, res) => {
             });
         }
 
+        if (!Array.isArray(part_ids) || part_ids.length === 0 || part_ids.length > 50) {
+            return res.status(400).json({
+                message: "Select between 1 and 50 bike parts"
+            });
+        }
+
+        const partIds = part_ids.map(Number);
+        if (partIds.some(id => !Number.isInteger(id) || id < 1) ||
+            new Set(partIds).size !== partIds.length) {
+            return res.status(400).json({
+                message: "Selected bike parts are invalid"
+            });
+        }
+
+        if (!["Repair", "Replace", "Inspect"].includes(part_action)) {
+            return res.status(400).json({
+                message: "Choose whether the selected parts need repair, replacement or inspection"
+            });
+        }
+
+        if (part_description != null &&
+            (typeof part_description !== "string" || part_description.length > 500)) {
+            return res.status(400).json({
+                message: "The parts description must be 500 characters or fewer"
+            });
+        }
+
         const [vehicleRows] = await connection.query(
-            "SELECT id FROM vehicles WHERE id = ? AND user_id = ?",
+            "SELECT id, fuel_type FROM vehicles WHERE id = ? AND user_id = ?",
             [vehicle_id, req.user.id]
         );
 
@@ -75,6 +134,51 @@ router.post("/", async (req, res) => {
             });
         }
 
+        const [serviceRows] = await connection.query(
+            "SELECT id, vehicle_type FROM services WHERE id = ? AND active = TRUE",
+            [service_id]
+        );
+
+        if (!serviceRows.length) {
+            return res.status(404).json({ message: "Selected service is unavailable" });
+        }
+
+        const vehicleType = String(vehicleRows[0].fuel_type || "").toLowerCase();
+        const serviceType = String(serviceRows[0].vehicle_type || "Both").toLowerCase();
+        if (serviceType !== "both" && serviceType !== vehicleType) {
+            return res.status(400).json({
+                message: "Selected service is not available for this bike type"
+            });
+        }
+
+        const compatibleVehicleType = vehicleType.includes("electric")
+            ? "Electric"
+            : vehicleType.includes("petrol")
+                ? "Petrol"
+                : null;
+        const partPlaceholders = partIds.map(() => "?").join(", ");
+        const partCompatibility = compatibleVehicleType
+            ? "AND (vehicle_type = ? OR vehicle_type = 'Both')"
+            : "AND vehicle_type = 'Both'";
+        const partParameters = compatibleVehicleType
+            ? [...partIds, compatibleVehicleType]
+            : partIds;
+        const [partRows] = await connection.query(
+            `SELECT id, price FROM parts
+             WHERE active = TRUE
+               AND id IN (${partPlaceholders})
+               ${partCompatibility}`,
+            partParameters
+        );
+
+        if (partRows.length !== partIds.length) {
+            return res.status(400).json({
+                message: "One or more selected parts are unavailable for this bike"
+            });
+        }
+
+        await connection.beginTransaction();
+        transactionStarted = true;
         const [result] = await connection.query(
             `INSERT INTO bookings
              (user_id, vehicle_id, service_id, service_date, service_time, notes, status)
@@ -89,11 +193,29 @@ router.post("/", async (req, res) => {
             ]
         );
 
+        await connection.query(
+            `INSERT INTO booking_parts
+             (booking_id, part_id, action_type, description, unit_price)
+             VALUES ${partIds.map(() => "(?, ?, ?, ?, ?)").join(", ")}`,
+            partRows.flatMap(part => [
+                result.insertId,
+                part.id,
+                part_action,
+                part_description?.trim() || null,
+                part.price
+            ])
+        );
+        await connection.commit();
+        transactionStarted = false;
+
         res.status(201).json({
             message: "Service booking confirmed",
             id: result.insertId
         });
     } catch (error) {
+        if (transactionStarted) {
+            await connection.rollback();
+        }
         console.error(error);
         res.status(500).json({
             message: "Unable to create booking"

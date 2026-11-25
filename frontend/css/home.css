@@ -261,6 +261,32 @@
     line-height: 1.7;
 }
 
+.home-care-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 22px;
+    margin-top: 22px;
+    color: #087b55;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.home-care-login:hover {
+    color: #055c40;
+}
+
+.home-care-catalog {
+    min-width: 0;
+}
+
+.home-catalog-label {
+    margin-bottom: 14px;
+    color: #68766f;
+    font-size: 9px;
+    font-weight: 800;
+}
+
 .home-feature-list {
     display: grid;
 }
@@ -299,9 +325,65 @@
     line-height: 1.6;
 }
 
+.home-feature small {
+    display: inline-block;
+    margin-top: 7px;
+    color: #087b55;
+    font-size: 10px;
+    font-weight: 700;
+}
+
 .home-feature-arrow {
     color: #087b55;
     font-size: 16px;
+}
+
+.home-service-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.home-service-link:hover h3 {
+    color: #087b55;
+}
+
+.home-service-link:focus-visible {
+    outline-color: #087b55;
+}
+
+.home-service-status {
+    padding: 18px 0;
+    color: var(--home-muted);
+    font-size: 13px;
+}
+
+.home-platform {
+    display: grid;
+    grid-template-columns: minmax(230px, .72fr) minmax(0, 1.28fr);
+    gap: 9%;
+    padding: 0 max(48px, calc((100vw - 1360px) / 2)) 76px;
+    background: #f4f5f1;
+}
+
+.home-platform-heading {
+    max-width: 400px;
+    padding-top: 6px;
+}
+
+.home-platform-heading h2 {
+    margin-top: 16px;
+    color: #15221c;
+    font-family: 'Barlow Condensed', 'Segoe UI', sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.home-platform-heading > p:last-child {
+    margin-top: 14px;
+    color: var(--home-muted);
+    font-size: 13px;
+    line-height: 1.7;
 }
 
 .home-footer {
@@ -366,6 +448,12 @@
         grid-template-columns: 1fr;
         gap: 34px;
         padding: 54px 26px 58px;
+    }
+
+    .home-platform {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 0 26px 58px;
     }
 
     .home-care-heading {
@@ -492,9 +580,18 @@
         padding: 38px 20px 42px;
     }
 
+    .home-platform {
+        gap: 20px;
+        padding: 0 20px 42px;
+    }
+
     .home-care-heading h2 {
         max-width: 340px;
         font-size: 38px;
+    }
+
+    .home-platform-heading h2 {
+        font-size: 35px;
     }
 
     .home-feature {

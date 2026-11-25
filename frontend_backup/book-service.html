@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Service | SERVEX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+
+        <div class="user-box">
+            <div class="avatar">👤</div>
+            <div>
+                <small>Welcome</small>
+                <strong data-user-name>User</strong>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html" class="">🏠 Dashboard</a>
+            <a href="my-vehicles.html" class="">🏍️ My Vehicles</a>
+            <a href="book-service.html" class="active">🛠️ Book Service</a>
+            <a href="service-history.html" class="">📋 Service History</a>
+        </nav>
+
+        <button class="logout" onclick="logout()">↪ Logout</button>
+    </aside>
+
+    <main class="main">
+
+<header class="topbar">
+    <div>
+        <p class="brand-text">SERVEX BIKE CARE</p>
+        <h1>Book Service</h1>
+        <p class="subtitle">Schedule a service for your bike quickly and easily.</p>
+    </div>
+
+    <div class="header-icon">🏍️</div>
+</header>
+
+<section class="card">
+
+    <div class="card-title">
+        <div>
+            <h2>Schedule Your Service</h2>
+            <p>Select your bike, service and preferred appointment time.</p>
+        </div>
+        <div class="header-icon" style="width:48px;height:48px;font-size:22px">
+            🔧
+        </div>
+    </div>
+
+    <div id="bookingMessage" class="alert hidden"></div>
+
+    <form id="bookingForm">
+
+        <div class="grid-2">
+
+            <div class="form-group">
+                <label>Select Bike</label>
+                <select id="bike" required>
+                    <option value="">Loading bikes...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Service Type</label>
+                <select id="service" required>
+                    <option value="">Loading services...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Service Date</label>
+                <input id="date" type="date" required>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Time</label>
+                <select id="time" required>
+                    <option value="">Select time</option>
+                    <option value="09:00:00">09:00 AM</option>
+                    <option value="10:00:00">10:00 AM</option>
+                    <option value="11:00:00">11:00 AM</option>
+                    <option value="12:00:00">12:00 PM</option>
+                    <option value="14:00:00">02:00 PM</option>
+                    <option value="15:00:00">03:00 PM</option>
+                    <option value="16:00:00">04:00 PM</option>
+                    <option value="17:00:00">05:00 PM</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label>Additional Notes</label>
+            <textarea id="notes" placeholder="Tell us if your bike has any specific problem..."></textarea>
+        </div>
+
+        <div class="booking-info">
+            <div class="info-item">
+                <span>🏍️</span>
+                <div>
+                    <small>Vehicle</small>
+                    <strong id="summaryBike">Not selected</strong>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <span>🔧</span>
+                <div>
+                    <small>Service</small>
+                    <strong id="summaryService">Not selected</strong>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <span>📅</span>
+                <div>
+                    <small>Date</small>
+                    <strong id="summaryDate">Not selected</strong>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;padding:15px">
+            ✓ Confirm Booking
+        </button>
+
+    </form>
+</section>
+
+    </main>
+
+<script src="js/api.js"></script>
+<script src="js/booking.js"></script>
+</body>
+</html>

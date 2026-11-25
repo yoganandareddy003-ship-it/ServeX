@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../db");
 const adminOnly = require("../middleware/admin");
+const { ensureBikePartsSchema } = require("../utils/parts");
 
 const router = express.Router();
 
@@ -127,20 +128,89 @@ router.get("/vehicles", async (req, res) => {
 // All bookings
 router.get("/bookings", async (req, res) => {
     try {
+        await ensureBikePartsSchema(db);
         const [rows] = await db.query(
             `SELECT b.*, u.full_name, u.email,
                     v.brand, v.model, v.registration_number,
-                    s.service_name, s.price
+                                        s.service_name, s.price,
+                                        (SELECT GROUP_CONCAT(
+                                            CONCAT(p.part_name, ' (', bp.action_type, ') — ',
+                                                IF(bp.unit_price IS NULL,
+                                                    'Price pending',
+                                                    CONCAT('₹', FORMAT(bp.unit_price, 2)))
+                                            )
+                                            ORDER BY p.category, p.part_name SEPARATOR ', '
+                                        )
+                                         FROM booking_parts bp
+                                         INNER JOIN parts p ON p.id = bp.part_id
+                                         WHERE bp.booking_id = b.id) AS requested_parts,
+                                        (SELECT SUM(bp.unit_price)
+                                         FROM booking_parts bp
+                                         WHERE bp.booking_id = b.id) AS parts_price_total,
+                                        (SELECT COUNT(*)
+                                         FROM booking_parts bp
+                                         WHERE bp.booking_id = b.id) AS requested_parts_count,
+                                        (SELECT COUNT(bp.unit_price)
+                                         FROM booking_parts bp
+                                         WHERE bp.booking_id = b.id) AS priced_parts_count,
+                                        (SELECT MAX(bp.description)
+                                         FROM booking_parts bp
+                                         WHERE bp.booking_id = b.id) AS parts_description,
+                                        h.id AS invoice_id, h.amount AS invoice_amount,
+                                        h.description AS invoice_description
              FROM bookings b
              INNER JOIN users u ON u.id=b.user_id
              INNER JOIN vehicles v ON v.id=b.vehicle_id
              INNER JOIN services s ON s.id=b.service_id
+                         LEFT JOIN service_history h ON h.id = (
+                                 SELECT sh.id
+                                 FROM service_history sh
+                                 WHERE sh.status = 'Completed'
+                                     AND (
+                                             sh.booking_id = b.id
+                                             OR (sh.booking_id IS NULL
+                                                     AND sh.user_id = b.user_id
+                                                     AND sh.vehicle_id = b.vehicle_id
+                                                     AND sh.service_id = b.service_id
+                                                     AND sh.service_date = b.service_date)
+                                     )
+                                 ORDER BY (sh.booking_id = b.id) DESC, sh.id DESC
+                                 LIMIT 1
+                         )
              ORDER BY b.service_date DESC, b.service_time DESC, b.id DESC`
         );
         res.json(rows);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Unable to load bookings" });
+    }
+});
+
+router.get("/history", async (req, res) => {
+    try {
+        const [rows] = await db.query(
+            `SELECT h.id,
+                    h.service_date,
+                    h.description,
+                    h.amount,
+                    h.status,
+                    u.full_name,
+                    u.email,
+                    v.brand,
+                    v.model,
+                    v.registration_number,
+                    s.service_name
+             FROM service_history h
+             INNER JOIN users u ON u.id = h.user_id
+             INNER JOIN vehicles v ON v.id = h.vehicle_id
+             INNER JOIN services s ON s.id = h.service_id
+             ORDER BY h.service_date DESC, h.id DESC`
+        );
+
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Unable to load service history" });
     }
 });
 
@@ -226,6 +296,57 @@ router.put("/bookings/:id/status", async (req, res) => {
 });
 
 // Services CRUD
+function isValidServiceVehicleType(vehicleType) {
+    return ["Electric", "Petrol", "Both"].includes(vehicleType);
+}
+
+router.get("/parts", async (req, res) => {
+    try {
+        await ensureBikePartsSchema(db);
+        const [rows] = await db.query(
+            `SELECT id, part_name, category, vehicle_type, price
+             FROM parts
+             WHERE active = TRUE
+             ORDER BY category, part_name`
+        );
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Unable to load bike parts" });
+    }
+});
+
+router.patch("/parts/:id/price", async (req, res) => {
+    const rawPrice = req.body.price;
+    const price = rawPrice === "" || rawPrice == null ? null : Number(rawPrice);
+
+    if (price !== null && (!Number.isFinite(price) || price < 0)) {
+        return res.status(400).json({ message: "Part price must be zero or greater" });
+    }
+
+    try {
+        await ensureBikePartsSchema(db);
+        const [result] = await db.query(
+            "UPDATE parts SET price = ? WHERE id = ? AND active = TRUE",
+            [price, req.params.id]
+        );
+
+        if (!result.affectedRows) {
+            const [[part]] = await db.query(
+                "SELECT id, price FROM parts WHERE id = ? AND active = TRUE",
+                [req.params.id]
+            );
+            if (!part) return res.status(404).json({ message: "Bike part not found" });
+            return res.json({ price: part.price });
+        }
+
+        res.json({ price });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Unable to update bike part price" });
+    }
+});
+
 router.get("/services", async (req, res) => {
     try {
         const [rows] = await db.query(
@@ -244,7 +365,8 @@ router.post("/services", async (req, res) => {
             service_name,
             description,
             price,
-            duration_minutes
+            duration_minutes,
+            vehicle_type = "Both"
         } = req.body;
 
         if (!service_name) {
@@ -253,15 +375,22 @@ router.post("/services", async (req, res) => {
             });
         }
 
+        if (!isValidServiceVehicleType(vehicle_type)) {
+            return res.status(400).json({
+                message: "Compatible bike type must be Electric, Petrol or Both"
+            });
+        }
+
         const [result] = await db.query(
             `INSERT INTO services
-             (service_name, description, price, duration_minutes)
-             VALUES (?, ?, ?, ?)`,
+             (service_name, description, price, duration_minutes, vehicle_type)
+             VALUES (?, ?, ?, ?, ?)`,
             [
                 service_name.trim(),
                 description || null,
                 Number(price || 0),
-                Number(duration_minutes || 60)
+                Number(duration_minutes || 60),
+                vehicle_type
             ]
         );
 
@@ -282,19 +411,27 @@ router.put("/services/:id", async (req, res) => {
             description,
             price,
             duration_minutes,
+            vehicle_type = "Both",
             active
         } = req.body;
+
+        if (!isValidServiceVehicleType(vehicle_type)) {
+            return res.status(400).json({
+                message: "Compatible bike type must be Electric, Petrol or Both"
+            });
+        }
 
         const [result] = await db.query(
             `UPDATE services
              SET service_name=?, description=?, price=?,
-                 duration_minutes=?, active=?
+                 duration_minutes=?, vehicle_type=?, active=?
              WHERE id=?`,
             [
                 service_name,
                 description || null,
                 Number(price || 0),
                 Number(duration_minutes || 60),
+                vehicle_type,
                 active ? 1 : 0,
                 req.params.id
             ]
@@ -308,6 +445,54 @@ router.put("/services/:id", async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Unable to update service" });
+    }
+});
+
+router.patch("/services/:id/vehicle-type", async (req, res) => {
+    const { vehicle_type: vehicleType } = req.body;
+
+    if (!isValidServiceVehicleType(vehicleType)) {
+        return res.status(400).json({
+            message: "Compatible bike type must be Electric, Petrol or Both"
+        });
+    }
+
+    try {
+        await db.query(
+            "UPDATE services SET vehicle_type = ? WHERE id = ?",
+            [vehicleType, req.params.id]
+        );
+
+        const [[service]] = await db.query(
+            "SELECT vehicle_type FROM services WHERE id = ?",
+            [req.params.id]
+        );
+
+        if (!service) {
+            return res.status(404).json({ message: "Service not found" });
+        }
+
+        res.json({ vehicle_type: service.vehicle_type });
+    } catch (error) {
+        console.error("Unable to update compatible bike type:", error);
+
+        const message = [
+            "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD",
+            "WARN_DATA_TRUNCATED"
+        ].includes(error.code)
+            ? "The services table has an outdated bike-type definition. Run database/admin_patch.sql and restart the backend."
+            : error.code === "ER_BAD_FIELD_ERROR"
+                ? "The connected database is missing services.vehicle_type. Apply database/admin_patch.sql to the database configured by the backend."
+            : [
+                "ER_ACCESS_DENIED_ERROR",
+                "ER_DBACCESS_DENIED_ERROR",
+                "ER_TABLEACCESS_DENIED_ERROR",
+                "ER_COLUMNACCESS_DENIED_ERROR"
+            ].includes(error.code)
+                ? "The database account does not have permission to update services."
+                : `Unable to update compatible bike type (${error.code || "unknown database error"})`;
+
+        res.status(500).json({ message });
     }
 });
 

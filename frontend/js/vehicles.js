@@ -212,7 +212,15 @@ async function loadVehicles() {
                 <div class="form-actions">
 
                     <button
+                        class="btn btn-primary btn-small book-bike-btn"
+                        type="button"
+                    >
+                        Book service
+                    </button>
+
+                    <button
                         class="btn btn-secondary btn-small edit-bike-btn"
+                        type="button"
                     >
                         Edit
                     </button>
@@ -250,6 +258,15 @@ async function loadVehicles() {
 
                 });
 
+            });
+
+        container
+            .querySelectorAll(".book-bike-btn")
+            .forEach((button, index) => {
+                button.addEventListener("click", event => {
+                    event.stopPropagation();
+                    window.location.href = `book-service.html?vehicleId=${encodeURIComponent(vehicles[index].id)}`;
+                });
             });
 
 

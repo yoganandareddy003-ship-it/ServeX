@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings | SERVEX Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<aside class="sidebar">
+    <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+    <div class="user-box">
+        <div class="avatar">🛡️</div>
+        <div>
+            <small>Administrator</small>
+            <strong data-admin-name>Admin</strong>
+        </div>
+    </div>
+    <nav class="nav">
+        <a href="admin-dashboard.html">📊 Dashboard</a>
+        <a href="admin-users.html">👥 Users</a>
+        <a href="admin-vehicles.html">🏍️ Vehicles</a>
+        <a href="admin-bookings.html" class="active">📅 Bookings</a>
+        <a href="admin-services.html">🔧 Services</a>
+    </nav>
+    <button class="logout" onclick="adminLogout()">↪ Logout</button>
+</aside>
+
+<main class="main">
+    <header class="topbar">
+        <div>
+            <p class="brand-text">SERVEX ADMINISTRATION</p>
+            <h1>Bookings</h1>
+            <p class="subtitle">Review bookings and update their service status.</p>
+        </div>
+    </header>
+
+    <div id="adminMessage" class="alert hidden"></div>
+
+    <section class="card">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Vehicle</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingsBody"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/admin-bookings.js"></script>
+</body>
+</html>

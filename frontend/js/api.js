@@ -32,6 +32,21 @@ function clearSession() {
     sessionStorage.removeItem("servex_user");
 }
 
+function renderSessionIdentity() {
+    const user = getUser();
+    const name = String(user?.full_name || user?.name || "User")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLocaleLowerCase()
+        .replace(/(^|[\s'-])(\p{L})/gu, (_, boundary, letter) =>
+            `${boundary}${letter.toLocaleUpperCase()}`
+        );
+
+    document.querySelectorAll("[data-user-name]").forEach(element => {
+        element.textContent = name || "User";
+    });
+}
+
 function requireLogin() {
     if (!getToken()) {
         window.location.href = "login.html";
@@ -68,7 +83,7 @@ async function apiFetch(endpoint, options = {}) {
         data = {};
     }
 
-    if (response.status === 401) {
+    if (response.status === 401 && endpoint !== "/auth/login") {
         clearSession();
         window.location.href = "login.html";
         throw new Error(data.message || "Session expired");
@@ -82,6 +97,8 @@ async function apiFetch(endpoint, options = {}) {
 }
 
 function appendCopyrightFooter() {
+    renderSessionIdentity();
+
     if (document.querySelector(".site-copyright, .home-copyright")) return;
 
     const text = `© ${new Date().getFullYear()} SERVEX Bike Care. All rights reserved.`;
@@ -234,7 +251,7 @@ function printInvoicePdf(invoice) {
 
     const user = getUser();
     const invoiceNumber = `SERVEX-${invoice.invoice_id || invoice.id}`;
-    const customerName = user?.full_name || "SERVEX Customer";
+    const customerName = invoice.full_name || user?.full_name || "SERVEX Customer";
     const details = invoice.description || invoice.service_name || "Service completed";
     const escape = value => String(value ?? "")
         .replaceAll("&", "&amp;")

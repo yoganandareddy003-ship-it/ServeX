@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service History | SERVEX Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-page">
+<aside class="sidebar">
+    <div class="logo"><img src="assets/servex-logo.svg" alt="SERVEX Bike Care"></div>
+    <div class="user-box">
+        <div class="avatar">🛡️</div>
+        <div>
+            <small>Administrator</small>
+            <strong data-admin-name>Admin</strong>
+        </div>
+    </div>
+    <nav class="nav">
+        <a href="admin-dashboard.html">📊 Dashboard</a>
+        <a href="admin-users.html">👥 Users</a>
+        <a href="admin-vehicles.html">🏍️ Vehicles</a>
+        <a href="admin-bookings.html">📅 Bookings</a>
+        <a href="admin-service-history.html" class="active">📋 Service History</a>
+        <a href="admin-services.html">🔧 Services</a>
+    </nav>
+    <button class="logout" onclick="adminLogout()">↪ Logout</button>
+</aside>
+
+<main class="main">
+    <header class="topbar">
+        <div>
+            <p class="brand-text">SERVEX ADMINISTRATION</p>
+            <h1>Service History</h1>
+            <p class="subtitle">Every completed service record across all users and vehicles.</p>
+        </div>
+    </header>
+
+    <div id="adminMessage" class="alert hidden"></div>
+
+    <section class="card">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Vehicle</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/admin-service-history.js"></script>
+</body>
+</html>

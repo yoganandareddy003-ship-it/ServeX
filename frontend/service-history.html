@@ -73,6 +73,17 @@
                 <option value="year">This year</option>
             </select>
         </label>
+        <label class="table-date-control" for="historyPageSize">
+            <span>Rows per page</span>
+            <select id="historyPageSize" aria-controls="historyBody">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+        </label>
+        <button id="exportHistoryCsv" class="table-export-button" type="button">
+            Export CSV
+        </button>
     </div>
     <div id="historySearchEmpty" class="search-empty-state history-search-empty" role="status" hidden>
         <span class="search-empty-illustration" aria-hidden="true">
@@ -106,6 +117,13 @@
 
             <tbody id="historyBody"></tbody>
         </table>
+    </div>
+    <div id="historyPagination" class="history-pagination" hidden>
+        <span id="historyPageSummary" role="status" aria-live="polite"></span>
+        <div class="history-pagination-actions">
+            <button id="historyPreviousPage" type="button">Previous</button>
+            <button id="historyNextPage" type="button">Next</button>
+        </div>
     </div>
 
 </section>

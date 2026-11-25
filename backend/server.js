@@ -52,7 +52,7 @@ app.use("/api/admin", require("./routes/admin"));
 app.get("/api/services-list", async (req, res) => {
     try {
         const [rows] = await db.query(
-            `SELECT id, service_name, description, price, duration_minutes
+            `SELECT id, service_name, description, price, duration_minutes, vehicle_type
              FROM services
              WHERE active = TRUE
              ORDER BY id`
@@ -85,6 +85,19 @@ app.use((err, req, res, next) => {
 
 const PORT = Number(process.env.PORT || 5000);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`ServeX running at http://localhost:${PORT}`);
+});
+
+server.on("error", error => {
+    if (error.code === "EADDRINUSE") {
+        console.error(
+            `ServeX could not start because port ${PORT} is already in use. ` +
+            "If ServeX is already running, keep using that instance; otherwise stop the process on this port or configure a different PORT."
+        );
+    } else {
+        console.error("ServeX failed to start:", error.message);
+    }
+
+    process.exitCode = 1;
 });

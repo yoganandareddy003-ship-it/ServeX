@@ -33,8 +33,14 @@
             </div>
 
             <div class="form-group">
-                <label>Password</label>
-                <input id="password" type="password" placeholder="Enter password" required>
+                <label for="password">Password</label>
+                <div class="password-field">
+                    <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+                    <button class="password-toggle" type="button" aria-label="Show password" aria-pressed="false" aria-controls="password" title="Show password">
+                        <svg data-eye-open viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <svg data-eye-closed viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path d="m3 3 18 18"></path></svg>
+                    </button>
+                </div>
             </div>
 
             <div class="login-options">
@@ -66,5 +72,6 @@
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/password-toggle.js"></script>
 </body>
 </html>

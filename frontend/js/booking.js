@@ -11,8 +11,11 @@ const ALLOWED_BOOKING_TIMES = [
 
 let bookingVehicles = [];
 let bookingServices = [];
+let bookingParts = [];
+let partsLoadError = "";
 let selectedVehicleId = "";
 let selectedServiceId = "";
+let selectedPartIds = [];
 let selectedTime = "";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -24,6 +27,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         .addEventListener("submit", createBooking);
 
     document.getElementById("date")
+        .addEventListener("change", updateBookingSummary);
+
+    document.getElementById("partAction")
         .addEventListener("change", updateBookingSummary);
 
     document.querySelectorAll("[data-next-step]").forEach(button => {
@@ -61,14 +67,33 @@ function setMinBookingDate() {
 
 async function loadBookingOptions() {
     try {
-        [bookingVehicles, bookingServices] = await Promise.all([
+        const [vehiclesResult, servicesResult, partsResult] = await Promise.allSettled([
             apiFetch("/vehicles"),
-            fetchServices()
+            fetchServices(),
+            apiFetch("/bookings/parts")
         ]);
 
+        if (vehiclesResult.status === "rejected") throw vehiclesResult.reason;
+        if (servicesResult.status === "rejected") throw servicesResult.reason;
+
+        bookingVehicles = vehiclesResult.value;
+        bookingServices = servicesResult.value;
+        bookingParts = partsResult.status === "fulfilled" ? partsResult.value : [];
+        partsLoadError = partsResult.status === "rejected"
+            ? partsResult.reason.message
+            : "";
+
         renderVehicleOptions();
-        renderServiceOptions();
-        updateBookingControls();
+        renderPartOptions();
+        const requestedVehicleId = new URLSearchParams(window.location.search)
+            .get("vehicleId");
+
+        if (bookingVehicles.some(vehicle => String(vehicle.id) === requestedVehicleId)) {
+            selectBookingVehicle(requestedVehicleId);
+        } else {
+            renderServiceOptions();
+            updateBookingControls();
+        }
 
     } catch (error) {
         showBookingMessage(error.message, "error");
@@ -113,23 +138,34 @@ function renderVehicleOptions() {
 
 function renderServiceOptions() {
     const container = document.getElementById("serviceOptions");
+    const services = getAvailableBookingServices();
 
-    if (!bookingServices.length) {
+    if (!selectedVehicleId) {
         container.innerHTML = `
             <div class="booking-empty-state">
-                <strong>No service packages are available</strong>
-                <p>Please try again later.</p>
+                <strong>Select a bike first</strong>
+                <p>Available services will be shown for your bike.</p>
             </div>
         `;
         return;
     }
 
-    container.innerHTML = bookingServices.map(service => `
+    if (!services.length) {
+        container.innerHTML = `
+            <div class="booking-empty-state">
+                <strong>No compatible service packages are available</strong>
+                <p>Please contact the workshop for service options for this bike.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = services.map(service => `
         <button
-            class="service-package-card"
+            class="service-package-card${String(service.id) === selectedServiceId ? " selected" : ""}"
             type="button"
             data-service-id="${service.id}"
-            aria-pressed="false"
+            aria-pressed="${String(service.id) === selectedServiceId}"
         >
             <span class="service-package-icon" aria-hidden="true">${getServiceIcon(service.service_name)}</span>
             <span class="service-package-copy">
@@ -146,6 +182,117 @@ function renderServiceOptions() {
     });
 }
 
+function getAvailableBookingServices() {
+    const vehicle = bookingVehicles.find(item => String(item.id) === selectedVehicleId);
+    if (!vehicle) {
+        return bookingServices;
+    }
+
+    const vehicleType = String(vehicle.fuel_type || "").toLowerCase();
+    return bookingServices.filter(service => {
+        const serviceType = String(service.vehicle_type || "Both").toLowerCase();
+        return serviceType === "both" || serviceType === vehicleType;
+    });
+}
+
+function getAvailableBookingParts() {
+    const vehicle = bookingVehicles.find(item => String(item.id) === selectedVehicleId);
+    if (!vehicle) return [];
+
+    const fuelType = String(vehicle.fuel_type || "").toLowerCase();
+    const vehicleType = fuelType.includes("electric")
+        ? "electric"
+        : fuelType.includes("petrol")
+            ? "petrol"
+            : "";
+
+    return bookingParts.filter(part => {
+        const partType = String(part.vehicle_type || "Both").toLowerCase();
+        return partType === "both" || partType === vehicleType;
+    });
+}
+
+function renderPartOptions() {
+    const container = document.getElementById("partOptions");
+    const parts = getAvailableBookingParts();
+
+    if (partsLoadError) {
+        container.innerHTML = `
+            <div class="booking-empty-state">
+                <strong>Bike parts are temporarily unavailable</strong>
+                <p>${escapeHtml(partsLoadError)}</p>
+            </div>
+        `;
+        return;
+    }
+
+    if (!selectedVehicleId) {
+        container.innerHTML = `
+            <div class="booking-empty-state">
+                <strong>Select a bike first</strong>
+                <p>Compatible parts will be shown for your bike.</p>
+            </div>
+        `;
+        return;
+    }
+
+    if (!parts.length) {
+        container.innerHTML = `
+            <div class="booking-empty-state">
+                <strong>No compatible parts are available</strong>
+                <p>Please contact the workshop to describe your request.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const categories = [...new Set(parts.map(part => part.category))];
+    container.innerHTML = categories.map(category => `
+        <fieldset class="parts-category">
+            <legend>${escapeHtml(category)}</legend>
+            <div class="parts-category-options">
+                ${parts.filter(part => part.category === category).map(part => `
+                    <label class="part-option">
+                        <input type="checkbox" value="${part.id}" ${selectedPartIds.includes(String(part.id)) ? "checked" : ""}>
+                        <span class="part-option-copy">
+                            <strong>${escapeHtml(part.part_name)}</strong>
+                            <small>${part.price == null ? "Price pending" : money(part.price)}</small>
+                        </span>
+                    </label>
+                `).join("")}
+            </div>
+        </fieldset>
+    `).join("");
+
+    container.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        input.addEventListener("change", () => {
+            const partId = String(input.value);
+            selectedPartIds = input.checked
+                ? [...selectedPartIds, partId]
+                : selectedPartIds.filter(id => id !== partId);
+            updatePartsSelection();
+            updateBookingSummary();
+        });
+    });
+}
+
+function updatePartsSelection() {
+    const count = selectedPartIds.length;
+    const selectedParts = bookingParts.filter(part =>
+        selectedPartIds.includes(String(part.id))
+    );
+    const partsArePriced = selectedParts.length > 0 &&
+        selectedParts.every(part => part.price != null && Number.isFinite(Number(part.price)));
+    const partsTotal = selectedParts.reduce((total, part) => total + Number(part.price || 0), 0);
+
+    document.getElementById("partsSelectionSummary").textContent =
+        `${count} part${count === 1 ? "" : "s"} selected${partsArePriced ? ` · Parts estimate ${money(partsTotal)}` : ""}.`;
+    document.getElementById("partsMessage").textContent = count
+        ? `${count} part${count === 1 ? "" : "s"} selected for ${document.getElementById("partAction").value.toLowerCase()}${partsArePriced ? "." : ". Some prices are pending workshop confirmation."}`
+        : "Select at least one part to continue.";
+    document.querySelector('[data-next-step="4"]').disabled = count === 0;
+}
+
 function getServiceIcon(serviceName) {
     const name = String(serviceName || "").toLowerCase();
 
@@ -159,15 +306,31 @@ function getServiceIcon(serviceName) {
 function selectBookingVehicle(vehicleId) {
     selectedVehicleId = String(vehicleId);
 
+    if (!getAvailableBookingServices().some(service => String(service.id) === selectedServiceId)) {
+        selectedServiceId = "";
+    }
+
     document.querySelectorAll(".booking-vehicle-option").forEach(button => {
         const selected = button.dataset.vehicleId === selectedVehicleId;
         button.classList.toggle("selected", selected);
         button.setAttribute("aria-pressed", String(selected));
     });
 
+    const compatiblePartIds = new Set(
+        getAvailableBookingParts().map(part => String(part.id))
+    );
+    selectedPartIds = selectedPartIds.filter(id => compatiblePartIds.has(id));
+    renderPartOptions();
+    updatePartsSelection();
+    renderServiceOptions();
     updateBookingSummary();
     updateBookingControls();
     clearBookingMessage();
+    showBookingStep(2);
+    document.getElementById("stepPackageTitle").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 }
 
 function selectBookingService(serviceId) {
@@ -208,6 +371,11 @@ function showBookingStep(step) {
         return;
     }
 
+    if (step === 4 && !selectedPartIds.length) {
+        showBookingMessage("Select at least one bike part before continuing.", "error");
+        return;
+    }
+
     document.querySelectorAll("[data-step-panel]").forEach(panel => {
         panel.hidden = Number(panel.dataset.stepPanel) !== step;
     });
@@ -241,8 +409,31 @@ function updateBookingSummary() {
         vehicle?.registration_number || "—";
     document.getElementById("summaryService").textContent =
         service?.service_name || "Not selected";
-    document.getElementById("summaryPrice").textContent =
-        service ? money(service.price) : "—";
+    document.getElementById("summaryParts").textContent = selectedPartIds.length
+        ? `${selectedPartIds.length} selected`
+        : "None selected";
+    document.getElementById("summaryPartAction").textContent =
+        document.getElementById("partAction").value;
+    const selectedParts = bookingParts.filter(part =>
+        selectedPartIds.includes(String(part.id))
+    );
+    const partsArePriced = selectedParts.length > 0 &&
+        selectedParts.every(part => part.price != null && Number.isFinite(Number(part.price)));
+    const partsTotal = selectedParts.reduce((total, part) => total + Number(part.price || 0), 0);
+    const partsPrice = selectedParts.length === 0
+        ? "—"
+        : partsArePriced ? money(partsTotal) : "Pending confirmation";
+    document.getElementById("summaryServicePrice").textContent = service
+        ? money(service.price)
+        : "—";
+    document.getElementById("summaryPartsPrice").textContent = partsPrice;
+    document.getElementById("summaryPrice").textContent = service
+        ? partsArePriced
+            ? money(Number(service.price) + partsTotal)
+            : selectedParts.length
+                ? "Parts price pending"
+                : money(service.price)
+        : "—";
     document.getElementById("summaryDate").textContent = date
         ? `${formatDate(date)}${selectedTime ? ` · ${formatTime(selectedTime)}` : ""}`
         : "Not selected";
@@ -253,9 +444,11 @@ function updateBookingSummary() {
 function updateBookingControls() {
     document.querySelector('[data-next-step="2"]').disabled = !selectedVehicleId;
     document.querySelector('[data-next-step="3"]').disabled = !selectedServiceId;
+    document.querySelector('[data-next-step="4"]').disabled = !selectedPartIds.length;
     document.getElementById("confirmBooking").disabled = !(
         selectedVehicleId &&
         selectedServiceId &&
+        selectedPartIds.length &&
         document.getElementById("date").value &&
         selectedTime
     );
@@ -265,15 +458,7 @@ async function fetchServices() {
     const response = await fetch("/api/services-list");
 
     if (!response.ok) {
-        // Fallback to the same service list used by the SQL seed.
-        return [
-            { id: 1, service_name: "General Service", price: 799 },
-            { id: 2, service_name: "Oil Change", price: 499 },
-            { id: 3, service_name: "Brake Service", price: 599 },
-            { id: 4, service_name: "Engine Repair", price: 1499 },
-            { id: 5, service_name: "Tyre Service", price: 399 },
-            { id: 6, service_name: "Full Service", price: 1999 }
-        ];
+        throw new Error("Unable to load compatible service packages");
     }
 
     return response.json();
@@ -333,7 +518,10 @@ async function createBooking(e) {
                 service_id: selectedServiceId,
                 service_date: selectedDate,
                 service_time: selectedTime,
-                notes: document.getElementById("notes").value
+                notes: document.getElementById("notes").value,
+                part_ids: selectedPartIds.map(Number),
+                part_action: document.getElementById("partAction").value,
+                part_description: document.getElementById("partDescription").value.trim()
             }
         });
 
@@ -349,6 +537,7 @@ async function createBooking(e) {
 function resetBookingForm() {
     selectedVehicleId = "";
     selectedServiceId = "";
+    selectedPartIds = [];
     selectedTime = "";
     document.getElementById("bookingForm").reset();
 
@@ -359,6 +548,8 @@ function resetBookingForm() {
         });
 
     setMinBookingDate();
+    renderPartOptions();
+    updatePartsSelection();
     showBookingStep(1);
     updateBookingSummary();
 }

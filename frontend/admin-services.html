@@ -21,6 +21,7 @@
         <a href="admin-users.html">👥 Users</a>
         <a href="admin-vehicles.html">🏍️ Vehicles</a>
         <a href="admin-bookings.html">📅 Bookings</a>
+        <a href="admin-service-history.html">📋 Service History</a>
         <a href="admin-services.html" class="active">🔧 Services</a>
     </nav>
     <button class="logout" onclick="adminLogout()">↪ Logout</button>
@@ -45,6 +46,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Service</th>
+                        <th>Compatible bikes</th>
                         <th>Description</th>
                         <th>Price</th>
                         <th>Duration</th>
@@ -53,6 +55,29 @@
                     </tr>
                 </thead>
                 <tbody id="servicesBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-title">
+            <div>
+                <h2>Bike Parts Pricing</h2>
+                <p>Set the estimate shown when customers request a part. Leave blank to confirm with the workshop.</p>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Part</th>
+                        <th>Category</th>
+                        <th>Compatible bikes</th>
+                        <th>Price estimate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="partsBody"></tbody>
             </table>
         </div>
     </section>
@@ -72,6 +97,14 @@
             <div class="form-group">
                 <label for="serviceDescription">Description</label>
                 <textarea id="serviceDescription" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="serviceVehicleType">Compatible bike type</label>
+                <select id="serviceVehicleType" required>
+                    <option value="Electric">Electric</option>
+                    <option value="Petrol">Petrol</option>
+                    <option value="Both" selected>Both</option>
+                </select>
             </div>
             <div class="grid-2">
                 <div class="form-group">
